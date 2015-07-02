@@ -13,14 +13,23 @@ open FSharp.Charting
 open Newtonsoft.Json
 open fszmq
 open fszmq.Socket
+open System.Security.Cryptography // sha signing
 
-type IfSharpKernel(connectionInformation : ConnectionInformation, ioSocket : Socket, shellSocket : Socket, hbSocket : Socket, controlSocket : Socket, stdinSocket : Socket) = 
+type IfSharpKernel(connectionInformation : ConnectionInformation,
+                   ioSocket : Socket,
+                   shellSocket : Socket,
+                   hbSocket : Socket,
+                   controlSocket : Socket,
+                   stdinSocket : Socket, 
+                   key : byte []) = 
 
     let data = new List<BinaryOutput>()
     let payload = new List<Payload>()
     let compiler = FsCompiler(FileInfo(".").FullName)
     let mutable executionCount = 0
     let mutable lastMessage : Option<KernelMessage> = None
+
+    let hmac = new HMACSHA256(key)
 
     /// Gets the header code to prepend to all items
     let headerCode = 
@@ -123,12 +132,22 @@ type IfSharpKernel(connectionInformation : ConnectionInformation, ioSocket : Soc
         for ident in envelope.Identifiers do
             socket <~| (encode ident) |> ignore
 
+        // This might not be the correct way to sign a message. 
+        // It only works with the empty key at present
+        let metadata = "{}"
+//        let signed_content = String.concat "" 
+//                               [ (serialize header)
+//                               ; (serialize envelope.Header)
+//                               ; metadata
+//                               ; (serialize content)
+//                               ] |> encode
+        //let signed_content = Array.map encode [| (serialize header);  "{}"; (serialize content) |]
         socket
             <~| (encode "<IDS|MSG>")
-            <~| (encode "")
+            <~| encode "" //(hmac.ComputeHash(signed_content))
             <~| (encode (serialize header))
             <~| (encode (serialize envelope.Header))
-            <~| (encode "{}")
+            <~| (encode metadata)
             <<| (encode (serialize content))
         
     /// Convenience method for sending the state of the kernel
@@ -202,7 +221,7 @@ type IfSharpKernel(connectionInformation : ConnectionInformation, ioSocket : Soc
     
     /// Handles an 'execute_request' message
     let executeRequest(msg : KernelMessage) (content : ExecuteRequest) = 
-        
+
         // clear some state
         sbOut.Clear() |> ignore
         sbErr.Clear() |> ignore

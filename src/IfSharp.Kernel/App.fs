@@ -231,7 +231,16 @@ module App =
             let fileName = args.[0]
             let json = File.ReadAllText(fileName)
             let connectionInformation = JsonConvert.DeserializeObject<ConnectionInformation>(json)
-
+            //let key = [||]
+            // Should read in the hmac sha key from the config file 
+            // This gets bytes but we still get mallformed message errors. 
+            // Are these the same bytes juypter gets? 
+            // perhaps we are not making the hash correctly?
+            let x = connectionInformation.key
+            printfn "Found key %s" x
+            let key = Encoding.UTF8.GetBytes(x)
+            printfn "Found bytes %A" key
+            
             // startup 0mq stuff
             use context = new Context()
 
@@ -256,7 +265,7 @@ module App =
             Socket.bind (iopubSocket) (String.Format("{0}://{1}:{2}", connectionInformation.transport, connectionInformation.ip, connectionInformation.iopub_port))
 
             // start the kernel
-            Kernel <- Some (IfSharpKernel(connectionInformation, iopubSocket, shellSocket, hbSocket, controlSocket, stdinSocket))
+            Kernel <- Some (IfSharpKernel(connectionInformation, iopubSocket, shellSocket, hbSocket, controlSocket, stdinSocket, key))
             Kernel.Value.StartAsync()
 
             // block forever
