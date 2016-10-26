@@ -1,10 +1,18 @@
+framework: >= net451
 source https://www.nuget.org/api/v2
 
-nuget FSharp.Compiler.Service 3.0.0 framework: >= net451
-nuget FSharp.Core.Microsoft.Signed 3.1.1.1 framework: >= net45
-nuget NetMQ 3.3.3.1
-nuget Newtonsoft.Json 5.0.8 framework: >= net45
-nuget FSharp.Charting 0.90.5 framework: >= net45
+nuget FSharp.Compiler.Service
+nuget AsyncIO = 0.1.20.0
+nuget NetMQ
+nuget Newtonsoft.Json
 nuget FAKE
-nuget xUnit >= 2.1 framework: >= net451
-nuget xunit.runner.console >= 2.1 framework: >= net451
+nuget xUnit
+nuget xunit.runner.console
+nuget Paket.Core
+
+group Docs
+
+	framework: >= net451
+	source https://www.nuget.org/api/v2
+
+	nuget FSharp.Formatting

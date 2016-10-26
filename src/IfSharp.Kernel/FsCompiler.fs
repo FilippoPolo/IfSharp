@@ -105,6 +105,8 @@ module FsCompilerInternals =
         | FSharpToolTipElement.None -> ()
         | FSharpToolTipElement.Single(it, comment) ->
             sb.AppendLine(it) |> buildFormatComment xmlCommentRetriever comment
+        | FSharpToolTipElement.SingleParameter(it, comment, _) ->
+            sb.AppendLine(it) |> buildFormatComment xmlCommentRetriever comment
         | FSharpToolTipElement.Group(items) ->
             let items, msg =
                 if items.Length > 10 then
@@ -130,7 +132,7 @@ module FsCompilerInternals =
     /// Tries to figure out the names to pass to GetDeclarations or GetMethods.
     let extractNames (line, charIndex) =
         
-        let sourceTok = SourceTokenizer([], "/home/test.fsx")
+        let sourceTok = SourceTokenizer([], Some "/home/test.fsx")
         let tokenizer = sourceTok.CreateLineTokenizer(line)
         let rec gatherTokens (tokenizer:FSharpLineTokenizer) state =
             seq {
@@ -298,6 +300,8 @@ type FsCompiler (executingDirectory : string) =
         | FSharpToolTipElement.None -> ()
         | FSharpToolTipElement.Single(it, comment) ->
             sb.AppendLine(it) |> this.BuildFormatComment xmlCommentRetriever comment
+        | FSharpToolTipElement.SingleParameter(it, comment, _) ->
+            sb.AppendLine(it) |> this.BuildFormatComment xmlCommentRetriever comment
         | FSharpToolTipElement.Group(items) ->
             let items, msg =
                 if items.Length > 10 then
@@ -325,7 +329,7 @@ type FsCompiler (executingDirectory : string) =
     /// Tries to figure out the names to pass to GetDeclarations or GetMethods.
     member this.ExtractNames (line, charIndex) =
         
-        let sourceTok = SourceTokenizer([], "/home/test.fsx")
+        let sourceTok = SourceTokenizer([], Some "/home/test.fsx")
         let tokenizer = sourceTok.CreateLineTokenizer(line)
         let rec gatherTokens (tokenizer:FSharpLineTokenizer) state =
             seq {
@@ -409,7 +413,7 @@ type FsCompiler (executingDirectory : string) =
 
         // get the options and parse
         let options = checker.GetProjectOptionsFromScript(fileName, source, getOptionsTimeFromFile(fileName), arguments, true) |> Async.RunSynchronously
-        let recent = checker.TryGetRecentTypeCheckResultsForFile(fileName, options, source)
+        let recent = checker.TryGetRecentCheckResultsForFile(fileName, options, source)
         let (parse, check) = 
             if recent.IsSome then
                 Debug.WriteLine("Using cached results for file: {0}", fileName)

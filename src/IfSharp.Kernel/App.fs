@@ -142,11 +142,10 @@ module App =
         // add to the payload
         Kernel.Value.AddPayload(text.ToString())
 
-    /// Installs the ifsharp files if they do not exist, then starts jupyter with the ifsharp profile
-    let InstallAndStart(forceInstall, start) = 
+    /// Installs the ifsharp files if they do not exist
+    let Install forceInstall = 
 
         let thisExecutable = Assembly.GetEntryAssembly().Location
-        let userDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         let kernelDir = Config.KernelDir
         let staticDir = Config.StaticDir
         let tempDir = Config.TempDir
@@ -244,28 +243,37 @@ module App =
             printfn "Saving kernel icon [%s]" logo32File
             IfSharpResources.ifsharp_32logo().Save(logo32File)
 
-        if start then
-          (
-          printfn "Starting ipython..."
-          let p = new Process()
-          p.StartInfo.FileName <- "jupyter"
-          p.StartInfo.Arguments <- "notebook"
-          p.StartInfo.WorkingDirectory <- userDir
+            printfn "Installing dependencies via Paket"
+            let dependencies = Paket.Dependencies.Locate(System.IO.Path.GetDirectoryName(thisExecutable))
+            dependencies.Install(false)
 
-          // tell the user something bad happened
-          if p.Start() = false then printfn "Unable to start jupyter, please install jupyter first"
-          )
+    /// Starts jupyter in the user's home directory
+    let StartJupyter () =
+
+        let userDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+
+        printfn "Starting ipython..."
+        let p = new Process()
+        p.StartInfo.FileName <- "jupyter"
+        p.StartInfo.Arguments <- "notebook"
+        p.StartInfo.WorkingDirectory <- userDir
+
+        // tell the user something bad happened
+        if p.Start() = false then printfn "Unable to start jupyter, please install jupyter first"
 
     /// First argument must be an ipython connection file, blocks forever
     let Start (args : array<string>) = 
 
         if args.Length = 0 then
-        
-            InstallAndStart(true, true)
+            Install true
+            StartJupyter()
+
+        else if args.[0] = "--install" then
+            Install true
 
         else
             // Verify kernel installation status
-            InstallAndStart(false, false)
+            Install false
 
             // Clear the temporary folder
             try

@@ -1,4 +1,4 @@
-FSharp.Core.Microsoft.Signed
+FSharp.Compiler.Service
+Chessie
 NetMQ
 xUnit
-FSharp.Charting

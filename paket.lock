@@ -1,24 +1,47 @@
+FRAMEWORK: >= NET451
 NUGET
   remote: https://www.nuget.org/api/v2
-  specs:
-    AsyncIO (0.1.18)
-    FAKE (4.23.6)
-    FSharp.Charting (0.90.5) - framework: >= net45
-    FSharp.Compiler.Service (3.0) - framework: >= net451
-    FSharp.Core.Microsoft.Signed (3.1.1.1) - framework: >= net45
-    NetMQ (3.3.3.1)
-      AsyncIO (>= 0.1.18)
-    Newtonsoft.Json (5.0.8) - framework: >= net45
-    xunit (2.1) - framework: >= net451
+    AsyncIO (0.1.20)
+    Chessie (0.6)
+      FSharp.Core
+    FAKE (4.41.6)
+    FSharp.Compiler.Service (8.0)
+      System.Collections.Immutable (>= 1.2)
+      System.Reflection.Metadata (>= 1.4.1-beta-24227-04)
+    FSharp.Core (4.0.0.1)
+    Mono.Cecil (0.9.6.4)
+    NetMQ (3.3.3.4)
+      AsyncIO (>= 0.1.20)
+    Newtonsoft.Json (9.0.1)
+    Paket.Core (3.23.2)
+      Chessie (>= 0.6)
+      FSharp.Core
+      Mono.Cecil
+      Newtonsoft.Json
+    System.Collections.Immutable (1.2)
+    System.Reflection.Metadata (1.4.1-beta-24430-01)
+      System.Collections.Immutable (>= 1.2)
+    xunit (2.1)
       xunit.assert (2.1)
       xunit.core (2.1)
-    xunit.abstractions (2.0) - framework: >= net451
-    xunit.assert (2.1) - framework: >= net451
-    xunit.core (2.1) - framework: >= net451
-      xunit.extensibility.core (2.1) - framework: >= net45, dnx451, dnxcore50, monoandroid, monotouch, portable-net45+win80+wp80+wpa81, xamarinios, winv4.5, wpv8.0, wpav8.1
-      xunit.extensibility.execution (2.1) - framework: >= net45, dnx451, dnxcore50, monoandroid, monotouch, portable-net45+win80+wp80+wpa81, xamarinios, winv4.5, wpv8.0, wpav8.1
-    xunit.extensibility.core (2.1) - framework: >= net451
+    xunit.abstractions (2.0)
+    xunit.assert (2.1)
+    xunit.core (2.1)
+      xunit.extensibility.core (2.1)
+      xunit.extensibility.execution (2.1)
+    xunit.extensibility.core (2.1)
       xunit.abstractions (2.0)
-    xunit.extensibility.execution (2.1) - framework: >= net451
-      xunit.extensibility.core (2.1) - framework: >= net45, dnx451, dnxcore50, monoandroid, monotouch, xamarinios, winv4.5, wpv8.0, wpav8.1
-xunit.runner.console (2.1) - framework: >= net451
+    xunit.extensibility.execution (2.1)
+      xunit.extensibility.core (2.1)
+    xunit.runner.console (2.1)
+
+GROUP Docs
+FRAMEWORK: >= NET451
+NUGET
+  remote: https://www.nuget.org/api/v2
+    FSharp.Compiler.Service (2.0.0.6)
+    FSharp.Formatting (2.14.4)
+      FSharp.Compiler.Service (2.0.0.6)
+      FSharpVSPowerTools.Core (>= 2.3 < 2.4)
+    FSharpVSPowerTools.Core (2.3)
+      FSharp.Compiler.Service (>= 2.0.0.3)
